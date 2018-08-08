@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 const checkAuth = require("../../config/check_auth");
 const Project = require("../models/project");
 const EnrichedEvent = require("../models/enrichedEvent");
-//const axios = require("../routes/axios")
+const axios = require ('axios');
 
 router.get("/:projectId/events/enriched",checkAuth,  (req, res, next) => {
     const projectId = req.params.projectId;
@@ -53,8 +53,9 @@ router.post("/:projectId/events/enriched", checkAuth,  (req, res, next) => {
         parentId: req.body.parentId,
         format: req.body.format,
         columns:req.body.columns,
-        positions: req.body.positions
-
+        positions: req.body.positions,
+        kafka: req.body.kafka,
+        livy:req.body.livy
     });
     enrichedEvent.save()
         .then(result => {
@@ -72,22 +73,32 @@ router.post("/:projectId/events/enriched", checkAuth,  (req, res, next) => {
                     parentId: result.parentId,
                     columns:result.columns,
                     positions:result.positions,
-                    format:result.format
+                    format:result.format,
+                    kafka:result.kafka,
+                    livy:result.livy
                 }
             });
-
-            Project.findOneAndUpdate({ _id: result.projectId},
-                { $push: { enrichedEvents:  result._id} });   
-           
+        console.log(result.livy + "   livy_call& ")
+        Project.findOneAndUpdate({ _id: result.projectId},
+                { $push: { enrichedEvents:  result._id} })   
+        axios.post("http://52.221.178.199:8998/batches",result.livy)
+        .then(function (response) {
+            console.log(response);
         })
-        
-        
+        .then(axios.get("http://52.221.178.199:8998/batches/"),function (res) {
+            console.log(res);
+          })
+        axios.post("http://52.221.178.199:8083/connectors",result.kafka)
+        .then(function (response) {
+            console.log(response);
+          })
         .catch(err => {
             console.log(err);
             res.status(500).json({
                 error: err
             });
         });
+    });
 });
     
 
