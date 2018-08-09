@@ -2,9 +2,9 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import './Login.css';
 import Input from '../UI/Input/Input';
-import Logo from '../Navigation/header/logo/Logo';
+
 import Spinner from '../UI/Spinner/Spinner';
-import Button from '../Button/Button';
+import Button from '../UI/Button/Button';
 import * as actions from '../../store/actions';
 
 class Login extends Component {

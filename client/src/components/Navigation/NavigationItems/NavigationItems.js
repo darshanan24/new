@@ -5,14 +5,20 @@ import NavigationItem from './NavigationItem/NavigationItem';
 
 const NavigationItems = () => (
   <ul className="unifyMenu">
-    <NavigationItem link="/" icon="icon-flash-outline">
+    <NavigationItem link="/sources" icon="icon-border_all">
+      Sources
+    </NavigationItem>
+    <NavigationItem link="/events" icon="icon-flash-outline">
       Events
     </NavigationItem>
-    <NavigationItem link="/orders" icon="icon-flash-outline">
+    <NavigationItem link="/dimensions" icon="icon-border_outer">
       Dimensions
     </NavigationItem>
-    <NavigationItem link="/auth" icon="icon-flash-outline">
-      Profile
+    <NavigationItem link="/cubes" icon="icon-layers">
+      Cubes
+    </NavigationItem>
+    <NavigationItem link="/analyze" icon="icon-chart-area-outline">
+      Analyze
     </NavigationItem>
   </ul>
 );

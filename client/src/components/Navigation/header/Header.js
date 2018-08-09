@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import './Header.css';
 import Logo from './logo/Logo';
 import Usernav from '../usernav/Usernav';

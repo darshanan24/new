@@ -3,7 +3,7 @@ import Aux from '../hoc/Aux/Aux';
 import './Layout.css';
 import Header from '../Navigation/header/Header';
 import SideDrawer from '../Navigation/SideDrawer/SideDrawer';
-import { BrowserRouter } from 'react-router-dom';
+
 import { connect } from 'react-redux';
 
 class Layout extends Component {

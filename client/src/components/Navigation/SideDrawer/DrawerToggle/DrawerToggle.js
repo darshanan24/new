@@ -7,7 +7,7 @@ const drawerToggle = props => {
   }
   return (
     <a className="mini-nav-btn" onClick={props.clicked}>
-      <i class={icontoggle} />
+      <i className={icontoggle} />
     </a>
   );
 };
