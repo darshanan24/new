@@ -1,5 +1,5 @@
 import * as actionTypes from './actionTypes';
-import axios from '../../axios';
+import axios from '../../axios-landoop';
 
 export const createSourceStart = () => {
   return {
@@ -33,9 +33,15 @@ export const createSource = sourceData => {
   return dispatch => {
     dispatch(createSourceStart());
     axios
-      .post('/sources.json', sourceData)
+      .post('/connectors', sourceData.configuration, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
       .then(response => {
-        dispatch(createSourceSucess(response.data.name, sourceData));
+        dispatch(
+          createSourceSucess(response.data.name, sourceData.configuration)
+        );
       })
       .catch(error => {
         dispatch(createSourceFail(error));
@@ -76,14 +82,12 @@ export const fetchSources = () => {
     dispatch(fetchSourcesStart());
     //  const queryParams = '?auth=' + token + '&orderBy="userId"&equalTo="' + userId + '"';
     axios
-      .get('/sources.json')
+      .get('/connectors')
       .then(res => {
         const fetchedSources = [];
         for (let key in res.data) {
-          fetchedSources.push({
-            ...res.data[key],
-            id: key
-          });
+          console.log('in store' + res.data[key]);
+          fetchedSources.push(res.data[key]);
         }
         dispatch(fetchSourcesSuccess(fetchedSources));
       })

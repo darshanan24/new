@@ -5,3 +5,5 @@ export {
   fetchProjects,
   setProject
 } from './Project';
+
+export { createSource, sourceInit, fetchSources, setSourceID } from './Source';

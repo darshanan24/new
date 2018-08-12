@@ -27,6 +27,10 @@ class ProjectList extends Component {
   };
 
   render() {
+    const projectList = {
+      ...this.props.projects
+    };
+
     const parsedArray = this.props.projects.map(element => {
       const test = {
         value: element.id,
@@ -38,6 +42,7 @@ class ProjectList extends Component {
     const test = {
       options: parsedArray
     };
+    console.log('first element' + projectList);
 
     let form = (
       <Input
