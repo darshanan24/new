@@ -8,7 +8,6 @@ router.get("/projects/v1", checkAuth, (req, res, next) => {
     Project.find()
         .exec()
         .then(docs => {
-            console.log(docs);
             const response = {
                 count: docs.length,
                 projects: docs.map(doc => {
@@ -16,10 +15,10 @@ router.get("/projects/v1", checkAuth, (req, res, next) => {
                         projectName: doc.name,
                         description: doc.description,
                         dimensions: doc.dimensions,
-                        rawEvents: doc.rawEvents ,
+                        rawEvents: doc.rawEvents,
                         enrichedEvents: doc.enrichedEvents,
                         customers: doc.customers,
-                        dataSources:doc.dataSources,
+                        dataSources: doc.dataSources,
                         description: doc.description,
                         joinedEvetns: doc.joinedEvents,
                         _id: doc._id
@@ -29,29 +28,26 @@ router.get("/projects/v1", checkAuth, (req, res, next) => {
             res.status(200).json(response);
         })
         .catch(err => {
-            console.log(err);
             res.status(500).json({
                 error: err
             });
         });
 });
 
-router.get("/project/v1",  checkAuth, (req, res, next) => {
+router.get("/project/v1", checkAuth, (req, res, next) => {
     const name = req.query.name;
     Project.find({ 'name': name })
         .exec()
         .then(docs => {
-                console.log(docs[0].name + "----" + req.query.name);
-                res.status(200).json({project:docs});
+            res.status(200).json({ project: docs });
         })
         .catch(err => {
-            console.log(err);
             res.status(403).json({
                 error: "FORBIDDEN:projectname doesnt exists"
             });
         });
 });
- 
+
 router.post("/projects/v1", checkAuth, (req, res, next) => {
     const project = new Project({
         _id: new mongoose.Types.ObjectId(),
@@ -60,13 +56,12 @@ router.post("/projects/v1", checkAuth, (req, res, next) => {
         dimensions: req.body.dimensions,
         events: req.body.events,
         enrichedEvents: req.body.enrichedEvents,
-        customers:req.body.customers,
-        dataSources:req.body.dataSources
+        customers: req.body.customers,
+        dataSources: req.body.dataSources
     });
     project
         .save()
         .then(result => {
-            console.log(result);
             res.status(201).json({
                 message: "Created project successfully",
                 createdProject: {
@@ -77,12 +72,11 @@ router.post("/projects/v1", checkAuth, (req, res, next) => {
                     enrichedEvents: result.enrichedEvents,
                     dimensions: result.dimensions,
                     customers: result.customers,
-                    dataSources:result.dataSources
+                    dataSources: result.dataSources
                 }
             });
         })
         .catch(err => {
-            console.log(err);
             res.status(500).json({
                 error: err
             });
@@ -105,8 +99,9 @@ router.get("/project/v1/:projectId", checkAuth, (req, res, next) => {
             }
         })
         .catch(err => {
-            console.log(err);
-            res.status(500).json({ error: err });
+            res.status(500).json({
+                error: err
+            });
         });
 });
 
@@ -115,15 +110,14 @@ router.delete("/project/v1/:projectId", checkAuth, (req, res, next) => {
     const id = req.params.projectId;
     Project.remove({ _id: id })
         .exec()
-        .then(result =>{
+        .then(result => {
             if (result.n === 0) {
                 return res.status(404).json({ message: "ID not found" })
-              } else {
-                return res.status(200).json({ message: "event removed"})
-              }
+            } else {
+                return res.status(200).json({ message: "event removed" })
+            }
         })
         .catch(err => {
-            console.log(err);
             res.status(500).json({
                 error: err
             });
@@ -131,7 +125,7 @@ router.delete("/project/v1/:projectId", checkAuth, (req, res, next) => {
 });
 
 
- 
+
 
 
 router.post("/project/v1/:projectId/addEDC", checkAuth, (req, res, next) => {
@@ -148,7 +142,6 @@ router.post("/project/v1/:projectId/addEDC", checkAuth, (req, res, next) => {
             });
         })
         .catch(err => {
-            console.log(err);
             res.status(500).json({
                 error: err
             });

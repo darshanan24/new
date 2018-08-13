@@ -9,22 +9,23 @@ const projectRoutes = require("./api/routes/projects");
 const profileRoutes = require("./api/routes/profiles");
 const enrichedEventRoutes = require("./api/routes/enrichedEvents");
 const rawEventRoutes = require("./api/routes/rawEvents");
-const dataSourcesRoutes = require("./api/routes/dataSources")
-const joinedEventRoutes = require("./api/routes/joinedEvents")
+const dataSourcesRoutes = require("./api/routes/dataSources");
+const joinedEventRoutes = require("./api/routes/joinedEvents");
 const userRoutes = require("./api/routes/users");
+//database connections
 const config = require('./config/database');
 mongoose.connect(config.database);
 let db = mongoose.connection;
 
 // Check connection
-db.once('open', function(){
-  console.log('Connected to MongoDB');
+db.once('open', function () {
+    console.log('Connected to MongoDB');
 });
 
 // Check for DB errors
-db.on('error', function(err){
-  console.log(err);
-}); 
+db.on('error', function (err) {
+    console.log(err);
+});
 
 //to avoid depricated warning
 mongoose.Promise = global.Promise;
@@ -52,8 +53,8 @@ app.use("/", projectRoutes);  //base path for projects
 app.use("/profiles", profileRoutes);
 app.use("/project/v1", enrichedEventRoutes);  //base path for Enriched Event
 app.use("/project/v1", rawEventRoutes);  //base path for Raw Event
-app.use("/project/v1",dataSourcesRoutes);
-app.use("/project/v1",joinedEventRoutes);
+app.use("/project/v1", dataSourcesRoutes);
+app.use("/project/v1", joinedEventRoutes);
 app.use("/user", userRoutes);
 // applicable to all apis
 app.use((req, res, next) => {
@@ -61,6 +62,7 @@ app.use((req, res, next) => {
     error.status = 404;
     next(error);
 });
+
 // applicable to all apis
 app.use((error, req, res, next) => {
     res.status(error.status || 500);

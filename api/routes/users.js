@@ -9,7 +9,7 @@ const User = require("../models/user");
 router.post("/signup", (req, res, next) => {
   if (req.body.password !== req.body.passwordConfirm) {
     res.status(400).json({
-    message: "Passwords do not match"
+      message: "Passwords do not match"
     });
     return next(err);
   }
@@ -78,7 +78,7 @@ router.post("/login", (req, res, next) => {
             },
             process.env.JWT_KEY,
             {
-                expiresIn: "1h"
+              expiresIn: "1h"
             }
           );
           return res.status(200).json({

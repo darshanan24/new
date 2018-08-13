@@ -9,10 +9,10 @@ const Metric = mongoose.Schema({
     Delay: Number
 })
 const EventMetric = mongoose.Schema({
-        CustomerField: String,
-        eventId: { type: mongoose.Schema.Types.ObjectId, ref: 'EnrichedEvent' },
-        Metrics: [Metric]
-    })
+    CustomerField: String,
+    eventId: { type: mongoose.Schema.Types.ObjectId, ref: 'EnrichedEvent' },
+    Metrics: [Metric]
+})
 const profileSchema = mongoose.Schema({
     _id: mongoose.Schema.Types.ObjectId,
     Name: { type: String, required: true, unique: true },

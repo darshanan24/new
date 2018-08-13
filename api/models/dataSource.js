@@ -7,8 +7,8 @@ const dataSourceSchema = mongoose.Schema({
     name: { type: String, required: true, unique: true },
     type: { type: String, required: true },
     projectId: { type: mongoose.Schema.Types.ObjectId, ref: 'Project', required: true },
-    config:{type:mongoose.Schema.Types.Mixed, required: true}
-   
+    config: { type: mongoose.Schema.Types.Mixed, required: true }
+
 });
 module.exports = mongoose.model('DataSource', dataSourceSchema);
 
