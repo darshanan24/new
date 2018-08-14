@@ -8,7 +8,9 @@ const axios = require('axios');
 
 router.get("/:projectId/events/enriched", checkAuth, (req, res, next) => {
     const projectId = req.params.projectId;
-    EnrichedEvent.find({ "projectId": projectId })
+    EnrichedEvent.find({
+            "projectId": projectId
+        })
         .exec()
         .then(docs => {
             res.status(200).json({
@@ -77,18 +79,19 @@ router.post("/:projectId/events/enriched", checkAuth, (req, res, next) => {
                 }
             });
 
-            Project.findOneAndUpdate({ _id: result.projectId },
-                { $push: { enrichedEvents: result._id } })
-            axios.post("http://52.221.178.199:8998/batches", result.livy)
-                .then(function (response) {
-                    console.log(response);
-                })
+            Project.findOneAndUpdate({
+                _id: result.projectId
+            }, {
+                $push: {
+                    enrichedEvents: result._id
+                }
+            }),
+            axios.all([
+                    axios.post("http://52.221.178.199:8998/batches", result.livy),
+                    axios.post("http://52.221.178.199:8083/connectors", result.kafka)
+                ])
                 .then(axios.get("http://52.221.178.199:8998/batches/"), function (res) {
                     console.log(res);
-                })
-            axios.post("http://52.221.178.199:8083/connectors", result.kafka)
-                .then(function (response) {
-                    console.log(response);
                 })
                 .catch(err => {
                     console.log(err);
@@ -118,7 +121,9 @@ router.get("/:projectId/event/enriched/:enrichedEventId", checkAuth, (req, res, 
                             })
                         } else {
                             res.status(404)
-                                .json({ message: "No valid entry found for provided ID" });
+                                .json({
+                                    message: "No valid entry found for provided ID"
+                                });
                         }
                     })
             } else if (project == null) {
@@ -138,12 +143,19 @@ router.get("/:projectId/event/enriched/:enrichedEventId", checkAuth, (req, res, 
 router.delete("/:projectId/event/enriched/:enrichedEventId", checkAuth, (req, res, next) => {
     const enrichedEventId = req.params.enrichedEventId;
     const projectId = req.params.projectId;
-    Project.findOneAndUpdate({ _id: projectId },
-        { $pull: { enrichedEvents: enrichedEventId } })
+    Project.findOneAndUpdate({
+            _id: projectId
+        }, {
+            $pull: {
+                enrichedEvents: enrichedEventId
+            }
+        })
         .exec()
         .then(project => {
             if (project) {
-                EnrichedEvent.remove({ _id: enrichedEventId })
+                EnrichedEvent.remove({
+                        _id: enrichedEventId
+                    })
                     .exec()
                     .then(result => {
                         if (result.n === 0) {
@@ -177,7 +189,9 @@ router.get("/:projectId/event/enriched", checkAuth, (req, res, next) => {
         .exec()
         .then(project => {
             if (project) {
-                EnrichedEvent.find({ 'name': name })
+                EnrichedEvent.find({
+                        'name': name
+                    })
                     .exec()
                     .then(doc => {
                         if (doc[0].projectId == project.id) {
@@ -186,7 +200,9 @@ router.get("/:projectId/event/enriched", checkAuth, (req, res, next) => {
                             })
                         } else {
                             res.status(404)
-                                .json({ message: "No valid entry found for provided ID" });
+                                .json({
+                                    message: "No valid entry found for provided ID"
+                                });
                         }
                     })
             } else if (project == null) {

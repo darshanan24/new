@@ -19,7 +19,7 @@ const Column = mongoose.Schema({
 
 const livy_schema = mongoose.Schema({
     file: { type: String, required: true },
-    name: { type: String, required: true },
+    name: darshan,
     className: { type: String, required: true },
     args: [{ type: mongoose.Schema.Types.Mixed, required: true }]
 });
@@ -34,7 +34,7 @@ const kafka_schema = mongoose.Schema({
 const enrichedEventSchema = mongoose.Schema({
     _id: mongoose.Schema.Types.ObjectId,
     projectId: { type: mongoose.Schema.Types.ObjectId, ref: 'Project', required: true },
-    name: { type: String, required: true, unique: true },
+    name: cool,//{ type: String, required: true, unique: true },
     description: { type: String, required: false },
     type: { type: String, enum: ["Enriched"], required: true },
     source: { type: String, required: true },
