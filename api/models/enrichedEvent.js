@@ -18,11 +18,16 @@ const Column = mongoose.Schema({
 });
 
 const livy_schema = mongoose.Schema({
-    file: { type: String, required: true },
-    name: darshan,
-    className: { type: String, required: true },
-    args: [{ type: mongoose.Schema.Types.Mixed, required: true }]
-});
+    file: {type: String,required: true,
+        default: function() {
+            return { data: '/home/centos/TestJars/livy.tester-1.0-SNAPSHOT.jar', info: 'hardcoded!' }
+          }
+    },
+    name: {type: String,required: true},
+    className: { type: String, required: true},
+    args: [ enrichedKafkaOptions] 
+  });
+
 
 const kafka_schema = mongoose.Schema({
     _id: mongoose.Schema.Types.ObjectId,
@@ -34,7 +39,7 @@ const kafka_schema = mongoose.Schema({
 const enrichedEventSchema = mongoose.Schema({
     _id: mongoose.Schema.Types.ObjectId,
     projectId: { type: mongoose.Schema.Types.ObjectId, ref: 'Project', required: true },
-    name: cool,//{ type: String, required: true, unique: true },
+    name: { type: String, required: true, unique: true },
     description: { type: String, required: false },
     type: { type: String, enum: ["Enriched"], required: true },
     source: { type: String, required: true },

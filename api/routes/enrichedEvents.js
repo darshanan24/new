@@ -57,7 +57,7 @@ router.post("/:projectId/events/enriched", checkAuth, (req, res, next) => {
         kafka: req.body.kafka,
         livy: req.body.livy
     });
-    enrichedEvent.save()
+    return enrichedEvent.save()
         .then(result => {
             console.log(result);
             res.status(201).json({
@@ -79,27 +79,31 @@ router.post("/:projectId/events/enriched", checkAuth, (req, res, next) => {
                 }
             });
 
-            Project.findOneAndUpdate({
+            return Project.findOneAndUpdate({
                 _id: result.projectId
             }, {
                 $push: {
                     enrichedEvents: result._id
                 }
-            }),
+            })
+        })
+        .then(() => {
             axios.all([
-                    axios.post("http://52.221.178.199:8998/batches", result.livy),
-                    axios.post("http://52.221.178.199:8083/connectors", result.kafka)
-                ])
-                .then(axios.get("http://52.221.178.199:8998/batches/"), function (res) {
+                axios.post("http://52.221.178.199:8998/batches", result.livy),
+                axios.post("http://52.221.178.199:8083/connectors", result.kafka)
+            ])
+            return axios.get("http://52.221.178.199:8998/batches/"),
+                function (res) {
                     console.log(res);
-                })
-                .catch(err => {
-                    console.log(err);
-                    res.status(500).json({
-                        error: err
-                    });
-                });
+                }
+        })
+        .catch(err => {
+            console.log(err);
+            res.status(500).json({
+                error: err
+            });
         });
+
 });
 
 
@@ -218,8 +222,4 @@ router.get("/:projectId/event/enriched", checkAuth, (req, res, next) => {
             });
         });
 });
-
-
-
-
 module.exports = router;
