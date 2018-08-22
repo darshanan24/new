@@ -5,6 +5,8 @@ const checkAuth = require("../../config/check_auth");
 const Project = require("../models/project");
 const EnrichedEvent = require("../models/enrichedEvent");
 const axios = require('axios');
+const doSomething = require('../routes/doSomething.js');
+const livy_call = require('../routes/livy_call');
 
 router.get("/:projectId/events/enriched", checkAuth, (req, res, next) => {
     const projectId = req.params.projectId;
@@ -41,61 +43,35 @@ router.get("/:projectId/events/enriched", checkAuth, (req, res, next) => {
 
 
 
+
+
 router.post("/:projectId/events/enriched", checkAuth, (req, res, next) => {
-    const enrichedEvent = new EnrichedEvent({
-        _id: mongoose.Types.ObjectId(),
-        name: req.body.name,
-        projectId: req.params.projectId, //taking from url
-        description: req.body.description,
-        type: req.body.type,
-        source: req.body.source,
-        delimiter: req.body.delimiter,
-        parentId: req.body.parentId,
-        format: req.body.format,
-        columns: req.body.columns,
-        positions: req.body.positions,
-        kafka: req.body.kafka,
-        livy: req.body.livy
-    });
-    return enrichedEvent.save()
-        .then(result => {
+    return doSomething(req.params.projectId, req.body, (result) => {
             console.log(result);
             res.status(201).json({
+                livy_call,
                 message: "Event stored",
                 createdEvent: {
-                    _id: result._id,
-                    projectId: result.projectId,
+                    _id: mongoose.Types.ObjectId(),
                     name: result.name,
+                    projectId: result.projectId,
                     description: result.description,
+                    regex: result.regex,
+                    kafkaresult: result.kafkaresult,
+                    format: result.format,
                     type: result.type,
                     source: result.source,
                     delimiter: result.delimiter,
                     parentId: result.parentId,
                     columns: result.columns,
                     positions: result.positions,
-                    format: result.format,
-                    kafka: result.kafka,
-                    livy: result.livy
+                    livy: result.livy,
+                    filters: result.filters,
+                    kafkaOptions: result.kafkaOptions
                 }
-            });
 
-            return Project.findOneAndUpdate({
-                _id: result.projectId
-            }, {
-                $push: {
-                    enrichedEvents: result._id
-                }
-            })
-        })
-        .then(() => {
-            axios.all([
-                axios.post("http://52.221.178.199:8998/batches", result.livy),
-                axios.post("http://52.221.178.199:8083/connectors", result.kafka)
-            ])
-            return axios.get("http://52.221.178.199:8998/batches/"),
-                function (res) {
-                    console.log(res);
-                }
+                
+            });
         })
         .catch(err => {
             console.log(err);
@@ -103,8 +79,8 @@ router.post("/:projectId/events/enriched", checkAuth, (req, res, next) => {
                 error: err
             });
         });
-
 });
+
 
 
 
