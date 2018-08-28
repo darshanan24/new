@@ -4,9 +4,10 @@ const mongoose = require("mongoose");
 const checkAuth = require("../../config/check_auth");
 const Project = require("../models/project");
 const EnrichedEvent = require("../models/enrichedEvent");
-const axios = require('axios');
+//const axios = require('axios');
 const doSomething = require('../routes/doSomething.js');
-const livy_call = require('../routes/livy_call');
+//const livy_call = require('../routes/livy_call');
+const fs = require("fs");
 
 router.get("/:projectId/events/enriched", checkAuth, (req, res, next) => {
     const projectId = req.params.projectId;
@@ -41,15 +42,51 @@ router.get("/:projectId/events/enriched", checkAuth, (req, res, next) => {
         });
 });
 
-
-
+function livy_call(result) {
+    var request = {
+        "optionName": "",
+        "schema": [], // passing columns
+        "regex": " ",
+        "timeField": {
+            "name": "",
+            "position": "",
+            "format": ""
+        },
+        "kafkaOptions": {
+            "kafka.bootstrap.servers": "localhost:9092",
+            "subscribe": "",
+            "failOnDataLoss": "false",
+            "auto.offset.reset": "earliest"
+        },
+        "filters": []
+    }
+    
+    var obj = JSON.parse(result);
+    // console.log(obj.columns.length);
+    // console.log(obj.columns)
+     var test = [];
+    for(i=0;i<obj.columns.length;i++){
+    test.push({
+       name : obj.columns[i].name,
+       startIndex : obj.columns[i].startIndex,
+       endIndex:  obj.columns[i].endIndex,
+       type: obj.columns[i].type
+    })}
+    console.log(test);
+    request.schema=test;
+    // request.timeField.name = test[0].name;
+    request.timeField.format = "dd/MMM/yyyy:HH:mm:ss xxxx"
+    request.filters = obj.filters;
+    request.regex = obj.regex;
+    request.optionName = obj.format;
+    console.log(request);   
+}
 
 
 router.post("/:projectId/events/enriched", checkAuth, (req, res, next) => {
     return doSomething(req.params.projectId, req.body, (result) => {
-            console.log(result);
+            livy_call(JSON.stringify(result));
             res.status(201).json({
-                livy_call,
                 message: "Event stored",
                 createdEvent: {
                     _id: mongoose.Types.ObjectId(),
@@ -57,7 +94,6 @@ router.post("/:projectId/events/enriched", checkAuth, (req, res, next) => {
                     projectId: result.projectId,
                     description: result.description,
                     regex: result.regex,
-                    kafkaresult: result.kafkaresult,
                     format: result.format,
                     type: result.type,
                     source: result.source,
@@ -65,12 +101,10 @@ router.post("/:projectId/events/enriched", checkAuth, (req, res, next) => {
                     parentId: result.parentId,
                     columns: result.columns,
                     positions: result.positions,
-                    livy: result.livy,
                     filters: result.filters,
-                    kafkaOptions: result.kafkaOptions
                 }
 
-                
+
             });
         })
         .catch(err => {

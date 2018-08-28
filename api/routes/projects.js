@@ -1,10 +1,17 @@
 const express = require("express");
-const router = express.Router();
 const mongoose = require("mongoose");
 const checkAuth = require("../../config/check_auth");
 const Project = require("../models/project");
+//const test = require("../routes/doSomething");
+const router = express.Router();
+
+
+const test =(ID) =>  {
+    console.log("test op" + ID);
+};
 
 router.get("/projects/v1", checkAuth, (req, res, next) => {
+    test("987654321");
     Project.find()
         .exec()
         .then(docs => {
@@ -62,6 +69,7 @@ router.post("/projects/v1", checkAuth, (req, res, next) => {
     project
         .save()
         .then(result => {
+            test.test(result);
             res.status(201).json({
                 message: "Created project successfully",
                 createdProject: {

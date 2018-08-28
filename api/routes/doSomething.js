@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const Project = require("../models/project");
 const EnrichedEvent = require("../models/enrichedEvent");
 
+
 function doSomething(projectId, options, onSave) {
     const enrichedEvent = new EnrichedEvent({
         _id: mongoose.Types.ObjectId(),
@@ -37,4 +38,5 @@ function doSomething(projectId, options, onSave) {
             });
         });
 }
+
 module.exports=doSomething;
